@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { LoginDto } from './dtos/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
+import { JwtPayload } from './jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -49,7 +50,15 @@ export class AuthService {
 			throw new UnauthorizedException("Wrong credentials")
 		}
 
+		const payload: JwtPayload = {
+			name: user.name,
+			role: user.role,
+			email: user.email
+		}
 
+		const accessToken = this.jwtService.sign(payload);
+
+		return { access_token: accessToken };
 	}
 
 
